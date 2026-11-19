@@ -1,6 +1,6 @@
 #!/bin/bash
-# DolphinScheduler alert server for Railway: waits for the schema (created by the API service)
-# and for ZooKeeper, then starts the alert server.
+# DolphinScheduler alert server for Railway: creates or upgrades the schema if needed
+# (shared lock with the other services), waits for ZooKeeper, then starts the alert server.
 set -e
 cd /opt/dolphinscheduler
 
@@ -22,6 +22,6 @@ wait_zookeeper() {
 PGJAR=$(ls /opt/dolphinscheduler/libs/postgresql-*.jar | head -1)
 ds_init() { java -cp "/opt/ds-init:${PGJAR}" ${NET_OPTS} DsInit "$@"; }
 
-ds_init wait-schema
+ds_init schema
 wait_zookeeper
 exec /bin/bash /opt/dolphinscheduler/alert-server/bin/start.sh

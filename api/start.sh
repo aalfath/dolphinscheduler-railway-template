@@ -23,9 +23,7 @@ wait_zookeeper() {
 PGJAR=$(ls /opt/dolphinscheduler/libs/postgresql-*.jar | head -1)
 ds_init() { java -cp "/opt/ds-init:${PGJAR}" ${NET_OPTS} DsInit "$@"; }
 
-ds_init wait-db
-echo "[start] creating or upgrading the DolphinScheduler schema"
-bash tools/bin/upgrade-schema.sh
+ds_init schema
 ds_init admin-password
 wait_zookeeper
 
