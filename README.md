@@ -1,4 +1,4 @@
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/apache-dolphinsche?utm_medium=integration&utm_source=button&utm_campaign=dolphinscheduler)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/apache-dolphinscheduler?utm_medium=integration&utm_source=button&utm_campaign=dolphinscheduler)
 
 # Deploy and Host Apache DolphinScheduler on Railway
 
