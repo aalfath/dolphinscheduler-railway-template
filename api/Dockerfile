@@ -14,7 +14,6 @@ RUN chmod +x /opt/railway/start.sh
 ENV TZ=UTC \
     SPRING_JACKSON_TIME_ZONE=UTC \
     DATABASE=postgresql \
-    SPRING_PROFILES_ACTIVE=postgresql \
     RESOURCE_STORAGE_TYPE=S3 \
     RESOURCE_STORAGE_UPLOAD_BASE_PATH=/dolphinscheduler \
     AWS_S3_CREDENTIALS_PROVIDER_TYPE=AWSStaticCredentialsProvider \
