@@ -26,5 +26,16 @@ if [ ! -L /opt/dolphinscheduler/logs ]; then
   ln -s /data/logs /opt/dolphinscheduler/logs
 fi
 
+# DolphinScheduler 3.4.3 writes IPv6 addresses as "[ip]:port" in its own config but as "ip:port"
+# in heartbeats, so on Railway's IPv6 network the master never finds its own slot and never runs
+# workflows. Pin the advertised address to the heartbeat form (DolphinScheduler's own NetUtils).
+advertise_address() {
+  local var="$1" port="$2" conf="$3" h
+  [ -n "${!var:-}" ] && return 0
+  h=$(java -cp "/opt/ds-init:/opt/dolphinscheduler/${conf}/conf:/opt/dolphinscheduler/libs/*" ${NET_OPTS} DsInit host 2>/dev/null | sed -n 's/^DSHOST=//p' | tail -1)
+  if [ -n "$h" ]; then export "$var=${h}:${port}"; echo "[start] advertising ${!var} (${var})"; fi
+}
+
 wait_zookeeper
+advertise_address WORKER_WORKERADDRESS "${WORKER_LISTENPORT:-1234}" worker-server
 exec /bin/bash /opt/dolphinscheduler/worker-server/bin/start.sh

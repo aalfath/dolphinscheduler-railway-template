@@ -1,6 +1,8 @@
 # Apache DolphinScheduler worker server (runs the tasks) for Railway.
 FROM apache/dolphinscheduler-worker:3.4.3@sha256:0ac2516d92ff704aaee9b5d17f3f4550a9920ed0ddd2faa8a4f0b9204f4bee40
 
+COPY DsInit.java /opt/ds-init/DsInit.java
+RUN javac -d /opt/ds-init /opt/ds-init/DsInit.java && rm /opt/ds-init/DsInit.java
 COPY start.sh /opt/railway/start.sh
 RUN chmod +x /opt/railway/start.sh
 

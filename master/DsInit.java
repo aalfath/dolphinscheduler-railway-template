@@ -2,6 +2,7 @@
 //   schema       : wait for PostgreSQL, then create or upgrade the DolphinScheduler schema under a
 //                  Postgres advisory lock (so API, master and alert server can all start at once);
 //                  skipped when t_ds_version already matches this image's version
+//   host         : print DolphinScheduler's own NetUtils.getHost() (needs the DS libs on the classpath)
 //   admin-password: replace the upstream default admin password with $ADMIN_PASSWORD,
 //                   only while the default is still set (a password changed in the UI is kept)
 import java.nio.file.*;
@@ -49,6 +50,12 @@ public class DsInit {
 
     public static void main(String[] a) throws Exception {
         String mode = a.length > 0 ? a[0] : "";
+        if (mode.equals("host")) {
+            // Same address DolphinScheduler puts in its heartbeats (unbracketed for IPv6).
+            Object h = Class.forName("org.apache.dolphinscheduler.common.utils.NetUtils").getMethod("getHost").invoke(null);
+            System.out.println("DSHOST=" + h);
+            return;
+        }
         int timeout = Integer.parseInt(System.getenv().getOrDefault("DS_INIT_TIMEOUT", "900"));
         long end = System.currentTimeMillis() + timeout * 1000L;
         String last = "";
@@ -68,7 +75,7 @@ public class DsInit {
                     }
                     return;
                 }
-                System.err.println("usage: DsInit schema|admin-password"); System.exit(2);
+                System.err.println("usage: DsInit schema|host|admin-password"); System.exit(2);
             } catch (SQLException e) {
                 if (!e.getMessage().equals(last)) { System.out.println("[ds-init] waiting (" + mode + "): " + e.getMessage()); last = e.getMessage(); }
                 if (System.currentTimeMillis() > end) { System.err.println("[ds-init] gave up after " + timeout + "s"); System.exit(1); }
